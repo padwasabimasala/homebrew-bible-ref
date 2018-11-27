@@ -1,13 +1,21 @@
-# Documentation: https://docs.brew.sh/Formula-Cookbook
-#                http://www.rubydoc.info/github/Homebrew/brew/master/Formula
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class BibleRef < Formula
-  desc "A perl script to look up Bible references and search for verses."
-  homepage ""
-  url "https://github.com/padwasabimasala/bible-ref/archive/v1.1.0.tar.gz"
-  sha256 "9df4f1712ad4c7407a831ea8e3deb50c52330eafe88a3d1605f0d218fe1ec643"
+  desc "Look up Bible references and search for verses"
+  url "https://github.com/padwasabimasala/bible-ref/archive/v1.1.1.tar.gz"
+  sha256 "1e451ca8d7d9575b8d3187cd8f7b4d7f5eaf755b3566cae9094220c303277ef7"
+  homepage "https://github.com/padwasabimasala/bible-ref"
+  head "https://github.com/padwasabimasala/bible-ref.git"
+
+  depends_on "perl"
 
   def install
+    inreplace "bible-ref", /\|\| undef \|\|/, "|| \"#{HOMEBREW_PREFIX}/Cellar/bible-ref/1.1.1/share\" ||"
     bin.install "bible-ref"
+    share.install "KJV"
+    share.install "KJV.dir"
+  end
+
+  test do
+    output = pipe_output("#{bin}/bible-ref KJV gen 1:1")
+    assert_match "Book 01 Genesis 001:001 In the beginning God created the heaven and the earth.", output
   end
 end
